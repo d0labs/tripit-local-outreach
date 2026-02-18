@@ -137,13 +137,13 @@ def parse_event_city(event) -> Optional[str]:
     if location:
         value = str(location)
         if value.strip():
-            return extract_city_state(value)
+            return value.strip()
 
     summary = event.get("summary")
     if summary:
         value = str(summary)
         if value.strip():
-            return extract_city_state(value)
+            return value.strip()
 
     return None
 
@@ -246,6 +246,14 @@ def match_city(
     normalized_trip = normalize_city(trip_city)
     if normalized_trip in contacts_map:
         return contacts_map[normalized_trip], "exact", None
+
+    best_exact = None
+    for key, path in contacts_map.items():
+        if key and key in normalized_trip:
+            if best_exact is None or len(key) > len(best_exact[0]):
+                best_exact = (key, path)
+    if best_exact:
+        return best_exact[1], "exact", None
 
     trip_coords = geocode_city(trip_city, geo_cache)
     if not trip_coords:
