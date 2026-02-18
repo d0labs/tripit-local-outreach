@@ -34,7 +34,7 @@ Notes:
 3) Prepare contacts directory (default `~/travel-contacts`):
 
 - File name: `City, ST.txt` preferred (case-insensitive) to avoid ambiguity
-- Matching uses the filename string, so include state/province in the filename
+- Matching uses the filename string, so include state or province in the filename
 - Format: one contact per line
 - Line format: `Name — Notes` (notes optional)
 

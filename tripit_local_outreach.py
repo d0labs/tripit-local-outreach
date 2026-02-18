@@ -52,41 +52,10 @@ def normalize_city(name: str) -> str:
     return " ".join(cleaned.split())
 
 
-US_STATE_CODES = {
-    "al","ak","az","ar","ca","co","ct","de","fl","ga","hi","id","il","in","ia","ks","ky","la","me","md",
-    "ma","mi","mn","ms","mo","mt","ne","nv","nh","nj","nm","ny","nc","nd","oh","ok","or","pa","ri","sc",
-    "sd","tn","tx","ut","vt","va","wa","wv","wi","wy","dc"
-}
-
-
 def extract_city_state(raw: str) -> str:
     parts = [p.strip() for p in raw.split(",") if p.strip()]
     if len(parts) >= 2:
-        if any(ch.isdigit() for ch in parts[0]):
-            import re
-            city_part = parts[-2]
-            city_tokens = [t for t in re.findall(r"[A-Za-z]+", city_part) if t]
-            city = " ".join(city_tokens[-2:]).title() if city_tokens else city_part
-            state_tokens = re.findall(r"[A-Za-z]{2}", parts[-1])
-            state_code = state_tokens[0].upper() if state_tokens else parts[-1].strip()[:2].upper()
-            return f"{city}, {state_code}"
         return f"{parts[0]}, {parts[1]}"
-
-    import re
-
-    raw_tokens = [t for t in raw.replace("/", " ").replace("-", " ").split() if t.strip()]
-    cleaned = [re.sub(r"[^A-Za-z0-9]", "", t) for t in raw_tokens]
-
-    for idx in range(len(cleaned) - 1, -1, -1):
-        token = cleaned[idx].lower()
-        if token in US_STATE_CODES:
-            city_candidates = [t for t in cleaned[:idx] if t.isalpha()]
-            city_tokens = city_candidates[-2:] if city_candidates else []
-            if not city_tokens:
-                break
-            city = " ".join(city_tokens).title()
-            return f"{city}, {token.upper()}"
-
     return parts[0] if parts else raw
 
 
