@@ -155,7 +155,17 @@ def event_in_range(event, start_window: datetime, end_window: datetime, tz: Zone
     return begin_dt.date() <= end_window.date() and end_dt.date() >= start_window.date()
 
 
-def fetch_trips(ics_url: str, timezone: str) -> List[Trip]:
+def best_contact_key(raw_city: str, contacts_map: Dict[str, str]) -> Optional[str]:
+    normalized = normalize_city(raw_city)
+    best = None
+    for key in contacts_map.keys():
+        if key and key in normalized:
+            if best is None or len(key) > len(best):
+                best = key
+    return best
+
+
+def fetch_trips(ics_url: str, timezone: str, contacts_map: Dict[str, str]) -> List[Trip]:
     tz = pick_timezone(timezone)
     now = datetime.now(tz)
     start_window = now
@@ -176,7 +186,7 @@ def fetch_trips(ics_url: str, timezone: str) -> List[Trip]:
         start, end = parse_event_dates(event, tz)
         if not start:
             continue
-        key = normalize_city(city)
+        key = best_contact_key(city, contacts_map) or normalize_city(city)
         existing = grouped.get(key)
         if not existing:
             grouped[key] = Trip(trip_id=key, city=city, start_date=start, end_date=end)
@@ -298,7 +308,7 @@ def main() -> int:
         print(f"No contacts found in {os.path.expanduser(contacts_dir)}")
         return 1
 
-    trips = fetch_trips(ics_url, timezone)
+    trips = fetch_trips(ics_url, timezone, contacts_map)
     if not trips:
         print("No upcoming trips found.")
         return 0
