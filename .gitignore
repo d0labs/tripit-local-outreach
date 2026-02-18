@@ -1,0 +1,6 @@
+.venv/
+state.json
+geo_cache.json
+config.json
+__pycache__/
+*.pyc

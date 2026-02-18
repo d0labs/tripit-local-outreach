@@ -1,0 +1,9 @@
+{
+  "tripit_ics_url": "TRIPIT_ICS_URL_HERE",
+  "todoist": {
+    "api_token": "TODOIST_API_TOKEN_HERE"
+  },
+  "contacts_dir": "~/travel-contacts",
+  "radius_km": 50,
+  "timezone": "America/Toronto"
+}
